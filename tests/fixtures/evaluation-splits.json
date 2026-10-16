@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "description": "Fixed stratified 30/20 split for retrieval evaluation. Do not use holdout questions to tune prompts, aliases, or ranking.",
+  "tuning": [1, 2, 3, 5, 6, 7, 11, 12, 13, 14, 19, 8, 10, 20, 23, 36, 37, 38, 39, 4, 9, 15, 24, 27, 16, 18, 30, 31, 17, 29],
+  "holdout": [21, 22, 25, 26, 28, 32, 33, 40, 42, 43, 44, 46, 41, 45, 47, 50, 48, 49, 34, 35]
+}

@@ -1,0 +1,64 @@
+{
+  "name": "assist-overlay",
+  "version": "3.2.2",
+  "description": "Transparent game assistant overlay",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:portable": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3"
+  },
+  "allowScripts": {
+    "electron@44.4.5": true
+  },
+  "build": {
+    "appId": "com.assistoverlay.app",
+    "productName": "Assist",
+    "directories": {
+      "output": "final-exe"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "ui-test.html",
+      "custom-ui.css",
+      "custom-ui.js",
+      "ui-kit.js",
+      "assist-icon.svg",
+      "assist-icon.ico",
+      "package.json"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/node_modules/uiohook-napi/**",
+      "**/node_modules/loopback-capture/**"
+    ],
+    "extraResources": [
+      {
+        "from": "audio-devices.ps1",
+        "to": "audio-devices.ps1"
+      }
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "assist-icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "@google-cloud/speech": "^8.1.0",
+    "loopback-capture": "^3.0.2",
+    "snowball-stemmers": "^0.6.0",
+    "uiohook-napi": "^1.5.5"
+  }
+}

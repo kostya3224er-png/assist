@@ -1,0 +1,112 @@
+/* ===== Кастомный UI вместо браузерных контролов (работает вместе с custom-ui.js) ===== */
+
+/* --- Нативные элементы остаются в DOM (renderer.js работает как раньше), но невидимы --- */
+.cs-native{
+  position:absolute!important; width:1px!important; height:1px!important; margin:0!important; padding:0!important;
+  border:0!important; opacity:0!important; pointer-events:none!important; overflow:hidden!important; clip-path:inset(50%);
+}
+
+/* --- Выпадающий список: кнопка --- */
+.cs{position:relative; width:100%;}
+.cs-trigger{
+  display:flex; align-items:center; gap:9px; width:100%; min-height:36px; padding:9px 10px 9px 11px;
+  background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text);
+  font:12px 'JetBrains Mono',monospace; text-align:left; cursor:pointer;
+  transition:border-color .18s,box-shadow .18s,background-color .18s,color .18s;
+}
+.cs-trigger:hover{border-color:var(--accent-line);}
+.cs-trigger:focus-visible,.cs.open .cs-trigger{border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); outline:none;}
+.cs-trigger:disabled{opacity:.45; cursor:not-allowed;}
+.cs-trigger:disabled:hover{border-color:var(--border);}
+.cs-label{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.cs-chev{flex-shrink:0; color:var(--accent); transition:transform .32s cubic-bezier(.2,.8,.2,1);}
+.cs.open .cs-chev{transform:rotate(180deg);}
+.cs-sw{width:14px; height:14px; border-radius:50%; flex-shrink:0; box-shadow:inset 0 0 0 1px rgba(128,128,128,.5);}
+
+/* --- Выпадающий список: меню --- */
+.cs-menu{
+  position:fixed; z-index:9999; left:0; top:0; display:flex; flex-direction:column; padding:5px;
+  border:1px solid var(--border); border-radius:12px;
+  background:var(--surface2);
+  background:color-mix(in srgb,var(--surface2) 90%,var(--text) 10%);
+  box-shadow:0 18px 40px -12px rgba(0,0,0,.7),0 0 0 1px rgba(0,0,0,.25),0 0 44px -22px var(--accent);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transform:translateY(-8px) scale(.97); transform-origin:top center;
+  transition:opacity .18s ease,transform .28s cubic-bezier(.2,.9,.25,1.05),visibility 0s linear .28s;
+}
+.cs-menu.up{transform:translateY(8px) scale(.97); transform-origin:bottom center;}
+.cs-menu.open{opacity:1; visibility:visible; pointer-events:auto; transform:none; transition-delay:0s;}
+
+.cs-list{
+  flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft,0px),#000 calc(100% - var(--fb,0px)),transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft,0px),#000 calc(100% - var(--fb,0px)),transparent 100%);
+}
+.cs-item{
+  display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:8px; color:var(--dim);
+  font:12px 'JetBrains Mono',monospace; cursor:pointer;
+  transition:background-color .14s,color .14s;
+  animation:cs-in .28s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--i,0) * 18ms);
+}
+.cs-item.hl{background:var(--accent-soft); color:var(--text);}
+.cs-item.sel,.cs-item.sel.hl{color:var(--accent);}
+.cs-item.dis{opacity:.4; cursor:not-allowed;}
+.cs-txt{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cs-check{flex-shrink:0; margin-left:auto; color:var(--accent); opacity:0; transform:scale(.5); transition:opacity .18s,transform .22s cubic-bezier(.2,.8,.2,1);}
+.cs-item.sel .cs-check{opacity:1; transform:none;}
+.cs-empty{padding:10px; color:var(--dim2); font:12px 'JetBrains Mono',monospace; text-align:center;}
+@keyframes cs-in{from{opacity:0; transform:translateY(-5px);}to{opacity:1; transform:none;}}
+
+/* --- Ползунки --- */
+input[type=range].slider{
+  -webkit-appearance:none; appearance:none; height:20px; padding:0; margin:0; border:0; background:transparent; cursor:pointer;
+  --p:calc(8px + (100% - 16px) * .5);
+}
+input[type=range].slider:focus{outline:none; box-shadow:none;}
+input[type=range].slider::-webkit-slider-runnable-track{
+  height:6px; border-radius:6px; box-shadow:inset 0 0 0 1px var(--border);
+  background:linear-gradient(to right,var(--accent) var(--p),var(--bg) var(--p));
+}
+input[type=range].slider::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; box-sizing:border-box; width:16px; height:16px; margin-top:-5px; border-radius:50%;
+  background:var(--accent); border:2px solid var(--surface2);
+  box-shadow:0 0 0 1px var(--accent-line),0 2px 6px rgba(0,0,0,.4);
+  transition:transform .16s cubic-bezier(.2,.8,.2,1),box-shadow .16s;
+}
+input[type=range].slider:hover::-webkit-slider-thumb{transform:scale(1.15);}
+input[type=range].slider:active::-webkit-slider-thumb{transform:scale(.95); box-shadow:0 0 0 1px var(--accent-line),0 0 0 6px var(--accent-soft);}
+input[type=range].slider:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 1px var(--accent-line),0 0 0 6px var(--accent-soft);}
+
+/* --- Выбор файла --- */
+.cs-file{display:flex; align-items:center; gap:10px; min-width:0; position:relative;}
+.cs-file-btn{
+  flex-shrink:0; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:8px;
+  padding:8px 12px; font:500 12px 'Inter',sans-serif; cursor:pointer;
+}
+.cs-file-btn:hover{border-color:var(--accent-line); color:var(--accent); background:var(--accent-soft);}
+.cs-file-name{flex:1; min-width:0; font-size:11px; color:var(--dim2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:color .16s;}
+.cs-file.has .cs-file-name{color:var(--text);}
+
+/* --- Подсказки вместо браузерных title --- */
+.cs-tip{
+  position:fixed; z-index:10000; left:0; top:0; max-width:260px; padding:5px 9px; border-radius:7px;
+  border:1px solid var(--border); background:var(--surface2); background:color-mix(in srgb,var(--surface2) 90%,var(--text) 10%);
+  color:var(--text); font:500 11px/1.4 'Inter',sans-serif; pointer-events:none;
+  box-shadow:0 8px 20px -8px rgba(0,0,0,.6);
+  opacity:0; transform:translateY(4px); transition:opacity .16s ease,transform .2s cubic-bezier(.2,.8,.2,1);
+}
+.cs-tip.show{opacity:1; transform:none;}
+
+/* --- Прочие браузерные мелочи --- */
+textarea,.source-details textarea{resize:none;}
+input::-ms-reveal,input::-ms-clear{display:none;}
+input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{
+  -webkit-box-shadow:0 0 0 100px var(--bg) inset; -webkit-text-fill-color:var(--text); caret-color:var(--text);
+  transition:background-color 9999s ease-out;
+}
+button:focus{outline:none;}
+button:focus-visible{outline:2px solid var(--accent-line); outline-offset:2px;}
+
+@media (prefers-reduced-motion:reduce){
+  .cs-menu,.cs-item,.cs-chev,.cs-tip{transition-duration:.01s; animation:none;}
+}
