@@ -3,3 +3,6 @@ npm
 final-exe/
 dist/
 build/
+node_modules/
+final-exe/
+npm
