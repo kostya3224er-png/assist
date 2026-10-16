@@ -1,2 +1,5 @@
 node_modules/
 npm
+final-exe/
+dist/
+build/
